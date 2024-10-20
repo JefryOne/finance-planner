@@ -23,6 +23,9 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Копируем WAR-файл из предыдущего этапа в Tomcat
 COPY --from=builder /app/target/finance-planner.war /usr/local/tomcat/webapps/finance-planner.war
 
+# Указываем директорию для хранения данных
+VOLUME ["/usr/local/tomcat/data"]
+
 # Открываем порт 8080
 EXPOSE 8080
 
