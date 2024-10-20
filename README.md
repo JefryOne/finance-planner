@@ -1,4 +1,4 @@
-# finance-planner
+# finance-planner...
 
 Для запуска:
 
