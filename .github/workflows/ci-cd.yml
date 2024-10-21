@@ -49,11 +49,11 @@ jobs:
 
       # Шаг 7: Сборка Docker-образа
       - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.repository_owner | toLower }}/finance-planner:${{ github.run_number }} .
+        run: docker build -t ghcr.io/$REPO_NAME/finance-planner:${{ github.run_number }} .
 
       # Шаг 8: Публикация Docker-образа в GHCR
       - name: Push Docker image to GHCR
-        run: docker push ghcr.io/${{ github.repository_owner | toLower }}/finance-planner:${{ github.run_number }}
+        run: docker push ghcr.io/$REPO_NAME/finance-planner:${{ github.run_number }}
 
   deploy:
     needs: build_and_publish
@@ -73,9 +73,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker pull ghcr.io/${{ github.repository_owner | toLower }}/finance-planner:${{ github.run_number }}
+            docker pull ghcr.io/$REPO_NAME/finance-planner:${{ github.run_number }}
             if [ "$(docker ps -q -f name=finance-planner)" ]; then
-              docker stop finance-planner
-              docker rm finance-planner
+            docker stop finance-planner
+            docker rm finance-planner
             fi
-            docker run -d --name finance-planner ghcr.io/${{ github.repository_owner | toLower }}/finance-planner:${{ github.run_number }}
