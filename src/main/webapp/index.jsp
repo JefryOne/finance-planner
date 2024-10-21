@@ -3,23 +3,36 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Планировщик финансовых расходов</title>
+    <title>Учет расходов</title>
 </head>
 <body>
-    <h2>Добавить новый расход</h2>
-    <form action="expenses" method="post">
-        <label>Наименование:</label><br>
-        <input type="text" name="item" required><br>
-        <label>Сумма (руб.):</label><br>
-        <input type="number" name="amount" required><br><br>
-        <input type="submit" value="Добавить">
-    </form>
+<h2>Добавить расход</h2>
+<form method="post" action="expenses">
+    Наименование: <input type="text" name="item"><br>
+    Сумма: <input type="text" name="amount"><br>
+    <input type="submit" value="Добавить">
+</form>
 
-    <h2>Список расходов</h2>
-    <ul>
-        <c:forEach var="expense" items="${expenses}">
-            <li>${expense}</li>
-        </c:forEach>
-    </ul>
+<h2>Список расходов</h2>
+<table border="1">
+    <tr>
+        <th>Наименование</th>
+        <th>Сумма</th>
+        <th>Действия</th>
+    </tr>
+    <c:forEach var="expense" items="${expenses}">
+        <tr>
+            <td>${expense.item}</td>
+            <td>${expense.amount} руб.</td>
+            <td>
+                <form method="post" action="expenses">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" value="${expense.id}">
+                    <input type="submit" value="Удалить">
+                </form>
+            </td>
+        </tr>
+    </c:forEach>
+</table>
 </body>
 </html>
