@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Учет расходов</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
     <h2>Добавить расход</h2>
