@@ -6,12 +6,13 @@
     <title>Учет расходов</title>
 </head>
 <body>
-<h2>Добавить расход</h2>
-<form method="post" action="expenses">
-    Наименование: <input type="text" name="item"><br>
-    Сумма: <input type="text" name="amount"><br>
-    <input type="submit" value="Добавить">
-</form>
+    <h2>Добавить расход</h2>
+    <form method="post" action="expenses">
+        <input type="hidden" name="action" value="add">
+        <label>Наименование: <input type="text" name="item"></label><br>
+        <label>Сумма: <input type="text" name="amount"></label><br>
+        <input type="submit" value="Добавить">
+    </form>
 
 <h2>Список расходов</h2>
 <table border="1">
