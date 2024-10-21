@@ -50,32 +50,55 @@ public class ExpenseServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-
-        List<String> expenses = new ArrayList<>();
-
-        try (Connection conn = getConnection()) {
-            String sql = "SELECT item, amount FROM expenses";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                String item = rs.getString("item");
-                BigDecimal amount = rs.getBigDecimal("amount");
-                expenses.add(item + " - " + amount + " руб.");
-            }
-        } catch (SQLException e) {
-            throw new ServletException("Ошибка получения расходов", e);
-        }
-
-        request.setAttribute("expenses", expenses);
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        // Перенаправляем на doPost для обработки всех запросов в одном методе
+        doPost(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action");
+
+        try {
+            if (action == null || action.isEmpty()) {
+                // Действие по умолчанию: отображение списка расходов
+                listExpenses(request, response);
+            } else if (action.equals("add")) {
+                addExpense(request, response);
+            } else if (action.equals("delete")) {
+                deleteExpense(request, response);
+            } else {
+                // Неизвестное действие
+                response.sendRedirect("expenses");
+            }
+        } catch (SQLException e) {
+            throw new ServletException("Ошибка обработки запроса", e);
+        }
+    }
+
+    private void listExpenses(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, ServletException, IOException {
+        List<Expense> expenses = new ArrayList<>();
+
+        try (Connection conn = getConnection()) {
+            String sql = "SELECT id, item, amount FROM expenses";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String item = rs.getString("item");
+                BigDecimal amount = rs.getBigDecimal("amount");
+                expenses.add(new Expense(id, item, amount));
+            }
+        }
+
+        request.setAttribute("expenses", expenses);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+    }
+
+    private void addExpense(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
         String item = request.getParameter("item");
         String amountStr = request.getParameter("amount");
         BigDecimal amount = new BigDecimal(amountStr);
@@ -86,8 +109,20 @@ public class ExpenseServlet extends HttpServlet {
             stmt.setString(1, item);
             stmt.setBigDecimal(2, amount);
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new ServletException("Ошибка добавления расхода", e);
+        }
+
+        response.sendRedirect("expenses");
+    }
+
+    private void deleteExpense(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        try (Connection conn = getConnection()) {
+            String sql = "DELETE FROM expenses WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
         }
 
         response.sendRedirect("expenses");
