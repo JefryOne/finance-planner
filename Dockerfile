@@ -17,14 +17,14 @@ RUN mvn clean package
 # Этап 2: Запуск приложения с помощью Tomcat
 FROM tomcat:9.0-jdk11-openjdk
 
+# Создаём директорию для хранения данных и устанавливаем права доступа
+RUN mkdir -p /data && chmod -R 777 /data
+
 # Удаляем стандартные приложения Tomcat (опционально)
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Копируем WAR-файл из предыдущего этапа в Tomcat
 COPY --from=builder /app/target/finance-planner.war /usr/local/tomcat/webapps/finance-planner.war
-
-# Указываем директорию для хранения данных
-VOLUME ["/usr/local/tomcat/data"]
 
 # Открываем порт 8080
 EXPOSE 8080

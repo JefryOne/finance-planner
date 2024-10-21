@@ -12,4 +12,25 @@
         <servlet-name>ExpenseServlet</servlet-name>
         <url-pattern>/expenses</url-pattern>
     </servlet-mapping>   -->
+
+    <context-param>
+        <param-name>jdbc.url</param-name>
+        <param-value>jdbc:h2:~/finance-planner-db;AUTO_SERVER=TRUE</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbc.username</param-name>
+        <param-value>sa</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbc.password</param-name>
+        <param-value></param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbc.driverClassName</param-name>
+        <param-value>org.h2.Driver</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbc.url</param-name>
+        <param-value>jdbc:h2:/data/finance-planner-db;AUTO_SERVER=TRUE</param-value>
+    </context-param>
 </web-app>
